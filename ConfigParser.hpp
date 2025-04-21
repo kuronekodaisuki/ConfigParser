@@ -181,7 +181,7 @@ private:
 };
 
 // =======================
-// OptionParser –{‘Ì
+// Parser –{‘Ì
 // =======================
 class ConfigParser 
 {
