@@ -248,7 +248,29 @@ public:
         return 0;
     }
 
-protected:
+    // サブコマンド
+    ConfigParser* add_subcommand(
+      const std::string& name, const std::string& description = "")
+    {
+      auto sub = std::make_unique<ConfigParser>();
+      sub->name_ = name;
+      sub->description_ = description;
+      auto ptr = sub.get();
+      subcommands_[name] = std::move(sub);
+      return ptr;
+    }
+
+    // サブコマンドをアクティブ化
+    void parse_subcommand(const std::string& name)
+    {
+      if (subcommands_.count(name)) {
+        active_subcommand_ = subcommands_[name].get();
+      } else {
+        throw std::runtime_error("Unknown subcommand: " + name);
+      }
+    }
+
+  protected:
     void set(const std::string& name, const std::string& value)
     {
         if (options_.count(name)) {
@@ -257,6 +279,10 @@ protected:
     }
 
 private:
+    std::string name_;
+    std::string description_;
     std::string delimiter_;
     std::unordered_map<std::string, std::unique_ptr<OptionBase>> options_;
+    std::unordered_map<std::string, std::unique_ptr<ConfigParser>> subcommands_;
+    ConfigParser* active_subcommand_ = nullptr;
 };
