@@ -189,10 +189,18 @@ public:
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="delimiter"></param>
+    /// <param name="delimiter">YAMLのデリミター':'以外も可能</param>
     ConfigParser(std::string delimiter = ":"): delimiter_(delimiter)
     {}
 
+    /// <summary>
+    /// オプション設定
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="name"></param>
+    /// <param name="variable">ベクトルの初期値を与えたい場合は文字列で列挙</param>
+    /// <param name="description"></param>
+    /// <returns></returns>
     template<typename T>
     Option<T>* add_option(const std::string& name, T& variable, std::string description = "")
     {
@@ -202,7 +210,11 @@ public:
         return rawPtr;
     }
 
-
+    /// <summary>
+    /// YAML形式の設定ファイルをパースする
+    /// </summary>
+    /// <param name="configFile"></param>
+    /// <returns></returns>
     int parse(const char* configFile)
     {
         std::vector<std::string> lines;
@@ -236,7 +248,7 @@ public:
         return 0;
     }
 
-
+protected:
     void set(const std::string& name, const std::string& value)
     {
         if (options_.count(name)) {
