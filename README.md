@@ -1,13 +1,13 @@
 # ConfigParser
 Parse YAML config file
 
+How to Use
+```cpp
 YAML file:
 scalar: 1
 vector: 3 3 3
 list: 360
 
-How to Use
-```cpp
 #include "ConfigParser.hpp"
 
 // =======================
