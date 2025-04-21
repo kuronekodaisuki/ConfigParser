@@ -1,6 +1,11 @@
 # ConfigParser
 Parse YAML config file
 
+YAML file:
+scalar: 1
+vector: 3 3 3
+list: 360
+
 How to Use
 ```cpp
 #include "ConfigParser.hpp"
@@ -35,7 +40,7 @@ int main(int argc, char* argv[]) {
   return 0;
 }
 
-YAML file:
-scalar: 100
-vector: 4 5 6
-list: 7
+Result:
+scalar = 1
+vector = 3 3 3
+list = 360
