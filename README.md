@@ -6,7 +6,7 @@ How to Use
 #include "ConfigParser.hpp"
 
 // =======================
-// 使用例 (main関数)
+// Example
 // =======================
 int main(int argc, char* argv[]) {
   int scalar;
