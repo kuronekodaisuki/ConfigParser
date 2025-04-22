@@ -180,6 +180,78 @@ private:
     size_t expectedCount_ = 0;
 };
 
+template<typename T>
+class OptionFunc : public OptionBase {
+public:
+  OptionFunc(
+    const std::string& name,
+    std::function<void(T)> setter,
+    std::function<T()> getter)
+    : name_(name)
+    , setter_(setter)
+    , getter_(getter)
+  {}
+
+  OptionFunc* default_val(const std::string& val)
+  {
+    defaultVal_ = val;
+    return this;
+  }
+
+  OptionFunc* description(const std::string& desc)
+  {
+    description_ = desc;
+    return this;
+  }
+
+  void setValue(const std::string& str) override
+  {
+    std::istringstream iss(str);
+    T temp;
+    iss >> temp;
+    setter_(temp);
+  }
+
+  void applyDefault()
+  {
+    if (!defaultVal_.empty()) {
+      setValue(defaultVal_);
+    }
+  }
+  OptionFunc* transform(std::function<T(const std::string&)> conv)
+  {
+    transformer_ = conv;
+    return this;
+  }
+
+  void setValue(const std::string& str) override
+  {
+    std::string lowerStr = str;
+    std::transform(
+      lowerStr.begin(), lowerStr.end(), lowerStr.begin(), ::tolower);
+
+
+    if (transformer_) {
+      setter_(transformer_(str));
+    } else {
+      std::istringstream iss(str);
+      T temp;
+      iss >> temp;
+      setter_(temp);
+    }
+  }
+
+private:
+  std::string name_;
+  std::string defaultVal_;
+  std::string description_;
+  std::function<void(T)> setter_;
+  std::function<T()> getter_;
+  std::function<T(const std::string&)> transformer_;
+};
+
+
+
 // =======================
 // Parser 本体
 // =======================
@@ -208,6 +280,19 @@ public:
         Option<T>* rawPtr = opt.get(); // チェーン用
         options_[name] = std::move(opt);
         return rawPtr;
+    }
+
+    template<typename T>
+    OptionFunc<T>* add_option_with_setter(
+      const std::string& name,
+      std::function<void(T)> setter,
+      std::function<T()> getter,
+      std::string description = "")
+    {
+      auto opt = std::make_unique<OptionFunc<T>>(name, setter, getter);
+      OptionFunc<T>* rawPtr = opt.get();
+      options_[name] = std::move(opt);
+      return rawPtr;
     }
 
     /// <summary>
